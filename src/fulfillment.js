@@ -9,7 +9,7 @@ module.exports = class Fulfillment {
         "Please input your order id and input 'stop' when you are done: "
       );
       if (nextOrderId !== "stop") {
-        ordersIds.push(nextOrderId);
+        ordersIds.push(Number(nextOrderId));
         nextAnswer = nextOrderId;
       } else {
         return ordersIds;
@@ -17,26 +17,49 @@ module.exports = class Fulfillment {
     }
   }
 
-  checkOrders(orderIds, data) {
-    const existedOrderIds = data.orders.map((order) => {
-      return order.orderId.toString();
+  checkOrders(orderIds, orders) {
+    const existedOrderIds = orders.map((order) => {
+      return order.orderId;
     });
 
-    const unExistedOrderIds = orderIds
-      .map((id) => {
-        if (!existedOrderIds.includes(id)) {
-          return id;
-        }
-      })
-      .filter((id) => {
-        return id !== undefined;
-      });
+    const unExistedOrderIds = orderIds.filter((id) => {
+      if (!existedOrderIds.includes(id)) {
+        return id;
+      }
+    });
+
     console.log(
       !unExistedOrderIds.length
         ? "\nProcessing orders now..."
-        : `\nThis orders: ${unExistedOrderIds.map((id) => {
+        : `\nOrder ID: ${unExistedOrderIds.map((id) => {
             return id;
           })} can not be found! Will process the rest orders`
     );
+    return orderIds.filter((id) => {
+      if (existedOrderIds.includes(id)) {
+        return id;
+      }
+    });
+  }
+
+  orderFulfillment(orderIds, orders) {
+    return orderIds.map((id) => {
+      const filteredOrders = orders
+        .filter((order) => {
+          return order.orderId === id;
+        })
+        .flatMap((order) => {
+          return order.items;
+        });
+        console.log(filteredOrders)
+    });
+  }
+
+  checkProductQuantity(items, allProducts){
+  
+  }
+
+  decreaseProductQuantity(productId, products){
+
   }
 };
