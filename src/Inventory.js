@@ -1,12 +1,4 @@
 module.exports = class Inventory {
-  checkProductsQuantity(products) {
-    products.map((product) => {
-      if (product.quantityOnHand < product.reorderThreshold) {
-        this.reOrderPurchase(product.productId, product.reorderAmount);
-      }
-    });
-  }
-
   checkReorderThreshold(products) {
     products.map((product) => {
       if (product.quantityOnHand < product.reorderThreshold) {
@@ -17,7 +9,15 @@ module.exports = class Inventory {
 
   reOrderPurchase(productId, reorderAmount) {
     console.log(
-      `This product with productId:${productId} needs to be reorder, a purchase order of ${reorderAmount} has been created!\n`
+      `\nThis product with productId:${productId} needs to be reorder, a purchase order of ${reorderAmount} has been created!`
+    );
+  }
+
+  createShipping(fulfilledOrders) {
+    console.log(
+      `\nShipping for Order(s) ${fulfilledOrders.map((id) => {
+        return id;
+      })} have been arranged...`
     );
   }
 };
