@@ -35,31 +35,50 @@ module.exports = class Fulfillment {
             return id;
           })} can not be found! Will process the rest orders`
     );
-    return orderIds.filter((id) => {
+    const processOrderIds = orderIds.filter((id) => {
       if (existedOrderIds.includes(id)) {
         return id;
       }
     });
-  }
-
-  orderFulfillment(orderIds, orders) {
-    return orderIds.map((id) => {
-      const filteredOrders = orders
-        .filter((order) => {
-          return order.orderId === id;
-        })
-        .flatMap((order) => {
-          return order.items;
-        });
-        console.log(filteredOrders)
+    return orders.filter((order) => {
+      if (processOrderIds.includes(order.orderId)) {
+        return order;
+      }
     });
   }
 
-  checkProductQuantity(items, allProducts){
-  
+  orderFulfillment(orders, products) {
+    let allProducts = products;
+    // let fulfilledOrderIds = [];
+    // let unFulfilledOrderIds = [];
+    for (let i = 0; i < orders.length; i++) {
+      const result = this.checkProductQuantity(orders[i].items, allProducts);
+      if (!result) {
+        allProducts = decreaseProductQuantity(orders[i].items, allProducts);
+        console.log(`This order: ${result} has been be fulfilled`);
+      }else{
+        console.log(`This order: ${result} has been be fulfilled`);
+      }
+    }
+    return allProducts
   }
 
-  decreaseProductQuantity(productId, products){
+  checkProductQuantity(items, products) {
+    for (let i = 0; i < items.length; i++) {
+      const product = products.filter((product) => {
+        return product.productId === items[i].productId;
+      });
+
+      const quantityDiff = product[0].quantityOnHand - items[i].quantity;
+      if (quantityDiff < 0) {
+        return items[i].orderId;
+      }
+    }
+  }
+
+  decreaseProductQuantity(items, products) {
+
+
 
   }
 };

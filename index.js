@@ -12,8 +12,9 @@ const processOrders = () => {
   const products = data.products;
 
   const orderIds = fulfillment.inputOrderId();
-  const filteredOrderIds = fulfillment.checkOrders(orderIds, orders);
-  fulfillment.orderFulfillment(filteredOrderIds, orders)
+  const processOrders = fulfillment.checkOrders(orderIds, orders);
+  fulfillment.orderFulfillment(processOrders, products)
+  console.log(processOrders)
 };
 
 
