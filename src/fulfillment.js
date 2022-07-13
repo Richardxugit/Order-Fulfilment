@@ -54,13 +54,19 @@ module.exports = class Fulfillment {
     for (let i = 0; i < orders.length; i++) {
       const result = this.checkProductQuantity(orders[i].items, allProducts);
       if (!result) {
-        allProducts = this.decreaseProductQuantity(orders[i].items, allProducts);
-        fulfilledOrderIds.push(orders[i].orderId)
+        allProducts = this.decreaseProductQuantity(
+          orders[i].items,
+          allProducts
+        );
+        fulfilledOrderIds.push(orders[i].orderId);
       } else {
-        unFulfilledOrderIds.push(orders[i].orderId)
+        unFulfilledOrderIds.push(orders[i].orderId);
       }
     }
-    return {allProducts,fulfilledOrderIds,unFulfilledOrderIds};
+    //Update order status
+    this.updateOrderStatus(orders, fulfilledOrderIds);
+
+    return { allProducts, fulfilledOrderIds, unFulfilledOrderIds };
   }
 
   checkProductQuantity(items, products) {
@@ -79,13 +85,23 @@ module.exports = class Fulfillment {
   decreaseProductQuantity(items, products) {
     let updatedProducts = products;
     for (let i = 0; i < items.length; i++) {
-
       updatedProducts.map((product) => {
         if (product.productId === items[i].productId) {
           product.quantityOnHand = product.quantityOnHand - items[i].quantity;
         }
       });
     }
-    return updatedProducts
+    return updatedProducts;
+  }
+
+  updateOrderStatus(orders, fulfilledOrderIds) {
+    return orders.map((order) => {
+      if (fulfilledOrderIds.includes(order.orderId)) {
+        order.status = "Fulfilled";
+      } else {
+        order.status = "Unfulfillable";
+      }
+      return order;
+    });
   }
 };

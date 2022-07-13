@@ -1,4 +1,3 @@
-"use strict";
 const data = require("./data/data.json");
 const Fulfillment = require("./src/fulfillment");
 const Inventory = require("./src/Inventory");
@@ -13,11 +12,13 @@ const processOrders = () => {
 
   const orderIds = fulfillment.inputOrderId();
   const processOrders = fulfillment.checkOrders(orderIds, orders);
+  
   const {
     allProducts: updatedProducts,
     fulfilledOrderIds,
     unFulfilledOrderIds,
   } = fulfillment.orderFulfillment(processOrders, products);
+
   if (fulfilledOrderIds.length > 0) {
     console.log(
       `\nOrder ID(s): ${fulfilledOrderIds.map((id) => {
@@ -26,6 +27,7 @@ const processOrders = () => {
     );
     inventory.createShipping(fulfilledOrderIds);
   }
+
   if (unFulfilledOrderIds.length > 0) {
     console.log(
       `\nOrder ID(s): ${unFulfilledOrderIds.map((id) => {
@@ -33,6 +35,7 @@ const processOrders = () => {
       })} can not be fulfilled`
     );
   }
+
   inventory.checkReorderThreshold(updatedProducts);
 };
 
